@@ -20,7 +20,7 @@ const Landing = () => {
                         transition={{ duration: 1.4, delay: 0.2 }}
                         className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6"
                     >
-                        Discover <span className="text-[#FF6B6B]">Pick Flick</span>
+                        Discover <span className="text-[#FF6B6B]">NicheNest</span>
                     </motion.h1>
 
                     <motion.p
@@ -29,7 +29,8 @@ const Landing = () => {
                         transition={{ duration: 1, delay: 0.6 }}
                         className="text-white/80 text-lg md:text-xl mb-10 max-w-2xl mx-auto"
                     >
-                        A space where your stories shine, your choices matter, and your memories are made.
+                        Welcome to NicheNest – Your Home for Handcrafted & Unique Creations
+                        NicheNest is a curated marketplace where tradition meets creativity. Discover one-of-a-kind handmade products crafted by talented artisans from across the country. Support small businesses, celebrate culture, and shop meaningfully — only on NicheNest.
                     </motion.p>
 
                     <div className="flex flex-col sm:flex-row gap-6 justify-center">
