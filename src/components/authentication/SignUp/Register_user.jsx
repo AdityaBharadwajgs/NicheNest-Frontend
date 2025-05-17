@@ -40,7 +40,7 @@ const Register_user = () => {
     }
     return (
         <>
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 p-4">
+            <div className="min-h-screen flex items-center justify-center bg-amber-50 p-4">
                 <div className="bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6">
                     <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white">Create Account</h2>
 
