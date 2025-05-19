@@ -39,46 +39,58 @@ const Otp_verification = () => {
          }   
   return (
     <>
-     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[var(--yellow)] to-[var(--white)] p-4">
-      <div className="bg-gradient-to-r from-[var(--white)] to-[var(--yellow)] shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800">
-          Verify OTP
-        </h2>
-        <p className="text-sm text-center text-gray-600">
-          Enter the 6-digit code sent to your email
-        </p>
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--yellow)] to-[var(--white)] p-4 relative overflow-hidden">
+  {/* subtle radial dot background */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none animate-pulse"></div>
 
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} >
-          <div className="flex justify-center gap-2">
-            {[...Array(6)].map((_, index) => (
-              <input
-                key={index}
-                type="text"
-                maxLength="1"
-                {...register( `otp[${index}]` , { required: 'OTP is required', pattern: { value: /^\d{1}$/, message: 'OTP must be exactly 6 digits' } })}
-                className="w-10 h-12 text-center border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
-               
-              />
-            ))}
-             {errors.otp && <p className='text-red-500'>{errors.otp.message} </p>}
-          </div>
+  <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.15)] backdrop-blur-xl border border-[rgba(212,175,55,0.3)] rounded-3xl shadow-2xl p-10 text-center z-10 space-y-6">
+    <h2 className="text-3xl font-bold text-[var(--lightblack)]">Verify OTP</h2>
+    <p className="text-[var(--lightblack)]/80 text-sm">
+      Enter the 6-digit code sent to your email
+    </p>
 
-          <div className="text-sm text-center text-gray-600 dark:text-gray-400">
-            Didn’t receive the code?{' '}
-            <button type="button" className="bg-[var(--yellow)] hover:underline" onClick={''} >
-              Resend
-            </button>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 rounded-lg bg-[var(--black)] text-white font-semibold text-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
-          >
-            Verify OTP
-          </button>
-        </form>
+    <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex justify-center gap-4">
+        {[...Array(6)].map((_, index) => (
+          <input
+            key={index}
+            type="text"
+            maxLength="1"
+            {...register(`otp[${index}]`, {
+              required: 'OTP is required',
+              pattern: {
+                value: /^\d{1}$/,
+                message: 'Each OTP digit must be a number',
+              },
+            })}
+            className="w-12 h-14 text-center rounded-xl border border-[var(--lightblack)] bg-[var(--white)] text-[var(--black)] placeholder-[var(--gray)] focus:outline-none focus:ring-2 focus:ring-[var(--yellow)]"
+          />
+        ))}
       </div>
-    </div>
+      {errors.otp && <p className="text-red-500">{errors.otp.message}</p>}
+
+      <div className="text-sm text-[var(--lightblack)]/70">
+        Didn’t receive the code?{' '}
+        <button
+          type="button"
+          className="text-[var(--yellow)] hover:underline"
+          onClick={() => {}}
+        >
+          Resend
+        </button>
+      </div>
+
+      <button
+        type="submit"
+        className="w-full py-3 rounded-full bg-gradient-to-r from-[var(--black)] to-[var(--yellow)] font-semibold text-[var(--white)] text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
+      >
+        Verify OTP
+      </button>
+    </form>
+  </div>
+</div>
+
+
     </>
   )
 }

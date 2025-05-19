@@ -33,48 +33,65 @@ const Login = () => {
     }
     return (
         <>
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
-                <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 space-y-6">
-                    <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white">Login</h2>
-                    <p className="text-sm text-center text-gray-600 dark:text-gray-300">Welcome back! Please login to your account</p>
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--yellow)] to-[var(--white)] p-4 relative overflow-hidden">
+                {/* subtle radial dot background */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none animate-pulse"></div>
 
-                    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} >
+                <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.15)] backdrop-blur-xl border border-[rgba(212,175,55,0.3)] rounded-3xl shadow-2xl p-8 space-y-6 text-[var(--black)]">
+                    <h2 className="text-3xl font-bold text-center text-[var(--lightblack)]">Login</h2>
+                    <p className="text-sm text-center text-[var(--lightblack)]/80">Welcome back! Please login to your account</p>
+
+                    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         <input
                             type="email"
                             placeholder="Email"
-                            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            {...register('email', { required: 'Email is required', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid Email' } })}
+                            className="w-full p-3 rounded-xl border border-[var(--lightblack)] bg-[var(--white)] text-[var(--black)] placeholder-[var(--gray)] focus:outline-none focus:ring-2 focus:ring-[var(--yellow)]"
+                            {...register('email', {
+                                required: 'Email is required',
+                                pattern: {
+                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                    message: 'Invalid Email',
+                                },
+                            })}
                         />
                         <input
                             type="password"
                             placeholder="Password"
-                            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            {...register('password', { required: 'Password is required', pattern: { value: /^[A-Za-z0-9]{8,}$/, message: 'Password must be at least 8 characters (letters or numbers)' } })}
+                            className="w-full p-3 rounded-xl border border-[var(--lightblack)] bg-[var(--white)] text-[var(--black)] placeholder-[var(--gray)] focus:outline-none focus:ring-2 focus:ring-[var(--yellow)]"
+                            {...register('password', {
+                                required: 'Password is required',
+                                pattern: {
+                                    value: /^[A-Za-z0-9]{8,}$/,
+                                    message: 'Password must be at least 8 characters (letters or numbers)',
+                                },
+                            })}
                         />
 
-                        <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400">
-                            <label className="flex items-center space-x-2">
-                                <input type="checkbox" className="form-checkbox h-4 w-4 text-purple-600" />
+                        <div className="flex justify-between items-center text-sm text-[var(--lightblack)]/80">
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" className="form-checkbox h-4 w-4 text-[var(--yellow)]" />
                                 <span>Remember me</span>
                             </label>
-                            <button type="button" className="text-purple-500 hover:underline">
+                            <button type="button" className="text-[var(--yellow)] hover:underline">
                                 Forgot Password?
                             </button>
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold text-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 hover:cursor-pointer"
+                            className="w-full py-3 rounded-full bg-gradient-to-r from-[var(--black)] to-[var(--yellow)] font-semibold text-[var(--white)] text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
                         >
                             Login
                         </button>
                     </form>
 
-                    <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-                        Don’t have an account? <span className="text-purple-500 hover:underline cursor-pointer">Sign up</span>
+                    <p className="text-sm text-center text-[var(--lightblack)]/70">
+                        Don’t have an account?{' '}
+                        <span className="text-[var(--yellow)] hover:underline cursor-pointer">Sign up</span>
                     </p>
                 </div>
             </div>
+
         </>
     )
 }

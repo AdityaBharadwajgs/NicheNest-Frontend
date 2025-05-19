@@ -88,13 +88,13 @@ export default function HomePage() {
           </div>
           <div>
             <h4 className="font-semibold text-gray-800 mb-2">Contact</h4>
-            <p>Email: support@desietsy.com</p>
+            <p>Email: support@nichenest.com</p>
             <p>Phone: +91 98765 43210</p>
-            <p>Address: New Delhi, India</p>
+            <p>Address: Kerala, India</p>
           </div>
         </div>
         <p className="mt-8">
-          © 2025 DesiEtsy. Celebrating handmade culture.
+          © 2025 NIcheNest. Celebrating handmade culture.
         </p>
       </footer>
     </div>
