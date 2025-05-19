@@ -39,12 +39,12 @@ const Otp_verification = () => {
          }   
   return (
     <>
-     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 p-4">
-      <div className="bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
+     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[var(--yellow)] to-[var(--white)] p-4">
+      <div className="bg-gradient-to-r from-[var(--white)] to-[var(--yellow)] shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800">
           Verify OTP
         </h2>
-        <p className="text-sm text-center text-gray-600 dark:text-gray-300">
+        <p className="text-sm text-center text-gray-600">
           Enter the 6-digit code sent to your email
         </p>
 
@@ -65,14 +65,14 @@ const Otp_verification = () => {
 
           <div className="text-sm text-center text-gray-600 dark:text-gray-400">
             Didn’t receive the code?{' '}
-            <button type="button" className="text-purple-500 hover:underline" onClick={''} >
+            <button type="button" className="bg-[var(--yellow)] hover:underline" onClick={''} >
               Resend
             </button>
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold text-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
+            className="w-full py-3 rounded-lg bg-[var(--black)] text-white font-semibold text-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
           >
             Verify OTP
           </button>

@@ -40,14 +40,17 @@ const Landing = () => {
                         >
                             Get Started
                         </button>
-                        <button
+                        {/* <button
                             onClick={() => navigate('/login')}
                             className="bg-white/20 border border-white/30 text-white font-semibold py-3 px-8 rounded-full text-lg backdrop-blur-md hover:bg-white/30 transition duration-300 hover:scale-105"
                         >
                             Log In
-                        </button>
+                        </button> */}
                     </div>
                 </motion.div>
+            </div>
+            <div className='bg-[var(--primary)] h-20'>
+
             </div>
         </>
     )
