@@ -1,12 +1,13 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { successToast } from '../../plugins/toast'
+import { Button } from '../reusable/Button'
 const Landing = () => {
     const navigate = useNavigate()
     return (
         <>
             <div className="min-h-screen w-full bg-gradient-to-br from-[var(--black)] via-[var(--lightblack)] to-[var(--yellow)] flex items-center justify-center p-4 relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(var(--white)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none animate-pulse"></div>
 
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
@@ -36,11 +37,12 @@ const Landing = () => {
 
                     <div className="flex flex-col sm:flex-row gap-6 justify-center">
                         <button
-                            onClick={() => navigate('/register_user')}
-                            className="bg-[var(--yellow)] hover:bg-yellow-500 text-[var(--black)] font-semibold py-3 px-8 rounded-full text-lg shadow-lg transition duration-300 hover:scale-105"
+                            onClick={() => {navigate('/home'), successToast('Welcome To NicheNest')}}
+                            className="bg-[var(--yellow)] hover:bg-yellow-500 text-[var(--black)] font-semibold py-3 px-8 rounded-full text-lg shadow-lg transition duration-300 hover:scale-105 hover:cursor-pointer"
                         >
                             Get Started
-                        </button>
+                        </button> 
+                    
                     </div>
                 </motion.div>
             </div>

@@ -4,6 +4,7 @@ import { errorToast, successToast } from '../../../plugins/toast';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { Input } from '../../reusable/Input';
 const Generate_otp = () => {
     const navigate = useNavigate()
 
@@ -35,20 +36,17 @@ const Generate_otp = () => {
     return (
         <>
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--yellow)] to-[var(--white)] p-4 relative overflow-hidden">
-                {/* subtle radial dot background */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none animate-pulse"></div>
-
-                <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.15)] backdrop-blur-xl border border-[rgba(212,175,55,0.3)] rounded-3xl shadow-2xl p-8 text-center z-10">
+                <div className="relative w-full max-w-md border border-[rgba(212,175,55,0.3)] rounded-3xl shadow-2xl p-8 text-center z-10">
                     <h2 className="text-3xl font-bold text-[var(--lightblack)] mb-4">OTP Generation</h2>
                     <p className="text-[var(--lightblack)]/80 mb-8">
                         An OTP will be sent to your email.
                     </p>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left">
-                        <input
+                        <Input
                             type="text"
                             placeholder="Enter Email"
-                            className="w-full p-3 rounded-xl border border-[var(--lightblack)] bg-[var(--white)] text-[var(--black)] placeholder-[var(--gray)] focus:outline-none focus:ring-2 focus:ring-[var(--yellow)]"
+                            className="w-full  rounded-xl border-[var(--lightblack)] bg-[var(--white)] text-[var(--black)] placeholder-[var(--black)] placeholder:opacity-60 focus:outline-none focus:ring-2 focus:ring-[var(--yellow)]"
                             {...register('email', {
                                 required: 'Email is required',
                                 pattern: {
@@ -68,9 +66,6 @@ const Generate_otp = () => {
                     </form>
                 </div>
             </div>
-
-
-
         </>
     )
 }
