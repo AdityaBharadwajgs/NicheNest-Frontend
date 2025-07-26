@@ -1,43 +1,86 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from '../components/home/Home';
-import Otp_verification from './authentication/SignUp/Otp_verification';
-import SetPassword from '../components/authentication/SignUp/Set_password';
-import Login from '../components/authentication/Login/LogIn';
+
+// Home & Landing
 import Home from '../components/home/Home';
-import ArtDecor from "./home/pages/categories/ArtDecor";
-import ArtDecorDetailsPage from "./home/pages/categories/ArtDecorDetailsPage";
-import Jewelry from "./home/pages/categories/Jewelry";
-import JewelryDetailsPage from "./home/pages/categories/JewelryDetailsPage";
-import Clothing from "./home/pages/categories/Clothing";
-import ClothingDetailsPage from "./home/pages/categories/ClothingDetailsPage";
-import Register_user from './authentication/SignUp/Register_user';
-import Generate_otp from './authentication/SignUp/Generate_otp';
-import ProductDetails from './home/ProductDetailsPage'; // ✅ imported dynamic product details
+import Login from '../components/authentication/Login/LogIn';
+
+// Authentication
+import RegisterUser from '../components/authentication/SignUp/Register_user';
+import GenerateOtp from '../components/authentication/SignUp/Generate_otp';
+import OtpVerification from '../components/authentication/SignUp/Otp_verification';
+import SetPassword from '../components/authentication/SignUp/Set_password';
+
+// Pages
+import ProfilePage from '../components/ProfilePage';
+import CartPage from '../components/home/CartPage';
+import ProductDetails from '../components/home/ProductDetailsPage';
+import SearchResultsPage from '../components/home/SearchResultsPage';
+import OrderPage from '../components/home/OrderPage';
+
+// Category Pages
+import ArtDecor from '../components/home/pages/categories/ArtDecor';
+import ArtDecorDetailsPage from '../components/home/pages/categories/ArtDecorDetailsPage';
+import Jewelry from '../components/home/pages/categories/Jewelry';
+import JewelryDetailsPage from '../components/home/pages/categories/JewelryDetailsPage';
+import Clothing from '../components/home/pages/categories/Clothing';
+import ClothingDetailsPage from '../components/home/pages/categories/ClothingDetailsPage';
+
+// Admin Panel
+import AdminDashboard from '../components/home/AdminDashboard';
+import AddProduct from '../components/home/AddProduct';
+import AddArtisan from '../components/home/AddArtisan';
+import EditArtisan from '../components/home/EditArtisan';
+import EditProduct from '../components/home/EditProduct'; // ✅ Import the EditProduct component
+import { LogIn } from 'lucide-react';
+import TrackOrder from "./home/TrackOrder";
 
 const Routing = () => {
-    return (
-        <Router>
-            <Routes>
-                <Route path='/' element={<LandingPage />} />
-                <Route path='/register_user' element={<Register_user />} />
-                <Route path='/generate_otp' element={<Generate_otp />} />
-                <Route path='/verify_otp' element={<Otp_verification />} />
-                <Route path='/set_password' element={<SetPassword />} />
-                <Route path='/login' element={<Login />} />
-                <Route path='/home' element={<Home />} />
-                {/* ✅ Category Pages */}
-                <Route path="/categories/art-decor" element={<ArtDecor />} />
-                <Route path="/categories/art-decor/:id" element={<ArtDecorDetailsPage />} />
-                <Route path="/categories/jewelry" element={<Jewelry />} />
-                <Route path="/categories/jewelry/:id" element={<JewelryDetailsPage />} />
-                <Route path="/categories/clothing" element={<Clothing />} />
-                <Route path="/categories/clothing/:id" element={<ClothingDetailsPage />} />
-                {/* ✅ Generic Product Page */}
-                <Route path="/product/:id" element={<ProductDetails />} />
-            </Routes>
-        </Router>
-    );
+  return (
+    <Router>
+      <Routes>
+        {/* Public Routes */}
+        <Route path='/' element={<Login />} />
+        <Route path='/home' element={<Home />} />
+        <Route path='/search' element={<SearchResultsPage />} />
+
+        {/* Authentication */}
+        <Route path='/register_user' element={<RegisterUser />} />
+        <Route path='/generate_otp' element={<GenerateOtp />} />
+        <Route path='/verify_otp' element={<OtpVerification />} />
+        <Route path='/set_password' element={<SetPassword />} />
+        <Route path='/login' element={<Login />} />
+
+        {/* User Profile & Cart */}
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path='/cart' element={<CartPage />} />
+
+        {/* Product Details */}
+        <Route path='/product/:id' element={<ProductDetails />} />
+
+        {/* Category Pages */}
+        <Route path='/categories/art-decor' element={<ArtDecor />} />
+        <Route path='/categories/art-decor/:id' element={<ArtDecorDetailsPage />} />
+        <Route path='/categories/jewelry' element={<Jewelry />} />
+        <Route path='/categories/jewelry/:id' element={<JewelryDetailsPage />} />
+        <Route path='/categories/clothing' element={<Clothing />} />
+        <Route path='/categories/clothing/:id' element={<ClothingDetailsPage />} />
+
+        {/* Admin Dashboard */}
+        <Route path='/admin/dashboard' element={<AdminDashboard />} />
+        <Route path='/admin/add-product' element={<AddProduct />} />
+        <Route path='/admin/add-artisan' element={<AddArtisan />} />
+        <Route path='/admin/edit-artisan/:id' element={<EditArtisan />} />
+        <Route path='/admin/edit-product/:id' element={<EditProduct />} /> {/* ✅ EDIT ROUTE */}
+
+        {/* Order Page */}
+        <Route path='/order' element={<OrderPage />} />
+
+        {/* Track Order Page */}
+        <Route path="/track-order/:trackingId" element={<TrackOrder />} />
+      </Routes>
+    </Router>
+  );
 };
 
 export default Routing;

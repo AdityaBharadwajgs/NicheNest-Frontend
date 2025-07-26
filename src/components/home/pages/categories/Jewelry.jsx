@@ -1,113 +1,194 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../../navbar/Navbar";
 import { Input } from "../../../reusable/Input";
 import { Button } from "../../../reusable/Button";
-
-// Static Jewelry product data
-const jewelryProducts = {
-  1: {
-    title: "Terracotta Necklace Set",
-    image: "/images/jewelry1.jpg",
-  },
-  2: {
-    title: "Oxidized Silver Jhumkas",
-    image: "/images/jewelry2.jpg",
-  },
-  3: {
-    title: "Beaded Bracelet Set",
-    image: "/images/jewelry3.jpg",
-  },
-  4: {
-    title: "Kundan Maang Tikka",
-    image: "/images/jewelry4.jpg",
-  },
-  5: {
-    title: "Thread Bangles",
-    image: "/images/jewelry5.jpg",
-  },
-  6: {
-    title: "Tribal Pendant Necklace",
-    image: "/images/jewelry6.jpg",
-  },
-};
+import bannerImg from "../../../../assets/Images/banner.jpg";
+import AxiosInstance from "../../../../config/Api_call";
 
 const Jewelry = () => {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from backend
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await AxiosInstance.get('/products');
+      const jewelryProducts = response.data.filter(product => 
+        product.category && product.category.toLowerCase() === 'jewelry'
+      );
+      setProducts(jewelryProducts);
+      setFilteredProducts(jewelryProducts);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setLoading(false);
+    }
+  };
+
+  // Search functionality
+  const handleSearch = () => {
+    if (!searchTerm.trim()) {
+      setFilteredProducts(products);
+      return;
+    }
+    
+    const filtered = products.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen font-sans bg-white text-gray-800">
+        <Navbar />
+        <div className="flex items-center justify-center h-64">
+          <p className="text-xl">Loading jewelry products...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 p-4 sm:p-6 md:p-10 font-sans">
+    <div className="min-h-screen font-sans bg-white text-gray-800">
       {/* Navbar */}
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="text-center mb-16 px-2">
-        <h2 className="text-3xl sm:text-5xl font-extrabold text-green-800 mb-4 leading-tight">
-          Jewelry
-        </h2>
-        <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-          Browse handcrafted jewelry made with love, precision, and cultural charm.
-        </p>
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
+      {/* Hero Banner */}
+      <section
+        className="relative h-[60vh] bg-cover bg-center rounded-b-3xl shadow"
+        style={{ backgroundImage: `url(${bannerImg})` }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div
+            className="px-6 py-5 rounded-xl text-white text-center max-w-2xl mx-4 sm:mx-auto"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+          >
+            <h1 className="text-4xl sm:text-5xl font-extrabold mb-3">Jewelry</h1>
+            <p className="text-lg sm:text-xl">
+              Discover handcrafted jewelry infused with heritage and love.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Search Bar */}
+      <section className="max-w-4xl mx-auto px-4 py-10 text-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Input
             placeholder="Search jewelry..."
-            className="w-full sm:w-80 border border-gray-300 rounded-xl px-4 py-2 shadow-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="w-full sm:w-80 border border-gray-300 rounded-xl px-4 py-2 shadow"
           />
-          <Button className="rounded-xl px-6 w-full sm:w-auto">Search</Button>
+          <Button 
+            onClick={handleSearch}
+            className="rounded-xl px-6 w-full sm:w-auto bg-green-600 text-white hover:bg-green-700 transition"
+          >
+            Search
+          </Button>
         </div>
       </section>
 
       {/* Product Grid */}
-      <section className="mb-20 px-2">
-        <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-left ml-1">
-          Featured Jewelry
+      <section className="max-w-7xl mx-auto px-4 py-10">
+        <h3 className="text-2xl font-bold mb-6 text-gray-800">
+          💎 {searchTerm ? `Search Results for "${searchTerm}"` : 'Featured Jewelry'}
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {Object.entries(jewelryProducts).map(([id, product]) => (
-            <div
-              key={id}
-              className="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition transform hover:scale-[1.02]"
-            >
-              <img
-                src={product.image}
-                alt={product.title}
-                className="h-44 w-full object-cover rounded-xl mb-4"
-              />
-              <h3 className="text-lg sm:text-xl font-semibold mb-1">{product.title}</h3>
-              <p className="text-sm text-gray-500 mb-3">Category: Jewelry</p>
-              <Link to={`/categories/jewelry/${id}`}>
-                <Button className="w-full rounded-xl">View Details</Button>
-              </Link>
-            </div>
-          ))}
-        </div>
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-xl text-gray-600 mb-4">
+              {searchTerm ? `No jewelry found for "${searchTerm}"` : 'No jewelry products available'}
+            </p>
+            {searchTerm && (
+              <Button 
+                onClick={() => {
+                  setSearchTerm("");
+                  setFilteredProducts(products);
+                }}
+                className="bg-green-600 text-white"
+              >
+                Clear Search
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {filteredProducts.map((product) => (
+              <div
+                key={product._id}
+                className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition transform hover:scale-[1.02]"
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-48 w-full object-cover rounded-xl mb-4"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/300x200?text=Image+Unavailable";
+                  }}
+                />
+                <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
+                <p className="text-sm text-gray-500 mb-2">Category: {product.category}</p>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-green-600 font-bold">₹{product.price}</span>
+                  <span className="text-sm text-gray-500">Stock: {product.stock}</span>
+                </div>
+
+                {/* ✅ Correct Route to JewelryDetailsPage */}
+                <Link to={`/categories/jewelry/${product._id}`}>
+                  <Button className="w-full rounded-xl bg-green-600 text-white hover:bg-green-700">
+                    View Details
+                  </Button>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Footer */}
-      <footer className="text-center text-gray-600 text-sm py-10 border-t border-gray-200 px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left max-w-6xl mx-auto">
+      <footer className="bg-gray-900 text-white py-12 px-6 mt-16 rounded-t-3xl">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div>
-            <h4 className="font-semibold text-gray-800 mb-2">About Us</h4>
-            <p>
-              We connect local artisans with customers seeking authentic,
-              handmade products. Empowering communities through craftsmanship.
+            <h4 className="font-bold text-lg mb-3">About Us</h4>
+            <p className="text-sm leading-relaxed">
+              We connect artisans with customers who appreciate handmade craftsmanship.
             </p>
           </div>
           <div>
-            <h4 className="font-semibold text-gray-800 mb-2">Quick Links</h4>
-            <ul className="space-y-1">
-              <li><a href="#" className="hover:underline">Home</a></li>
-              <li><a href="#" className="hover:underline">Categories</a></li>
-              <li><a href="#" className="hover:underline">Offers</a></li>
-              <li><a href="#" className="hover:underline">Support</a></li>
+            <h4 className="font-bold text-lg mb-3">Quick Links</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/" className="hover:underline">Home</Link></li>
+              <li><Link to="/categories/art-decor" className="hover:underline">Categories</Link></li>
+              <li><Link to="/offers" className="hover:underline">Offers</Link></li>
+              <li><Link to="/support" className="hover:underline">Support</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-gray-800 mb-2">Contact</h4>
-            <p>Email: support@desietsy.com</p>
-            <p>Phone: +91 98765 43210</p>
-            <p>Address: New Delhi, India</p>
+            <h4 className="font-bold text-lg mb-3">Contact</h4>
+            <p className="text-sm">📧 support@desietsy.com</p>
+            <p className="text-sm">📞 +91 98765 43210</p>
+            <p className="text-sm">📍 New Delhi, India</p>
           </div>
         </div>
-        <p className="mt-8">© 2025 DesiEtsy. Celebrating handmade culture.</p>
+        <p className="text-center mt-10 text-sm text-gray-400">
+          © 2025 DesiEtsy. Celebrating handmade culture.
+        </p>
       </footer>
     </div>
   );

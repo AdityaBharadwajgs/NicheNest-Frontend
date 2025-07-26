@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React from 'react'
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { errorToast, successToast } from '../../../plugins/toast';
@@ -8,73 +8,67 @@ import { Input } from '../../reusable/Input';
 
 const Set_password = () => {
   const navigate = useNavigate();
-  const { signedupUser } = useSelector(store => store.signedupUser);
-  console.log(signedupUser.id);
+  const { signedupUser } = useSelector((store) => store.signedupUser);
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    console.log(data);
+
+  const onSubmit = async (data) => {
     try {
-      axios({
-        method: 'POST',
-        url: `${import.meta.env.VITE_BASE_URL}/auth/create_password/${signedupUser._id}`,
-        data: data,
-        params: { id: signedupUser._id }
-      }).then((response) => {
-        console.log(response.data);
-        successToast('Your account is created successfully');
-        navigate('/login')
-
-      })
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/create_password/${signedupUser._id}`,
+        data,
+        {
+          params: { id: signedupUser._id },
+        }
+      );
+      console.log(res.data);
+      successToast('✅ Your account is created successfully!');
+      navigate('/login');
     } catch (error) {
-      console.log(error);
-      errorToast('something went wrong')
-
+      console.error('❌ Password creation failed:', error);
+      errorToast('❌ Something went wrong. Please try again.');
     }
-  }
+  };
+
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--yellow)] to-[var(--white)] p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-300 via-green-200 to-white p-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 space-y-6 border border-gray-200">
+        <h2 className="text-3xl font-bold text-center text-gray-800">🔒 Set Password</h2>
+        <p className="text-sm text-center text-gray-600">
+          Create a strong password to complete your registration
+        </p>
 
-        <div className="relative w-full max-w-md border border-[rgba(212,175,55,0.3)] rounded-3xl shadow-2xl p-8 space-y-6 text-[var(--black)]">
-          <h2 className="text-3xl font-bold text-center text-[var(--lightblack)]">Set Password</h2>
-          <p className="text-sm text-center text-[var(--lightblack)]/80">
-            Create a secure password to complete your registration
-          </p>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            type="password"
+            placeholder="Enter new password"
+            className="w-full rounded-lg border-gray-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+            {...register('password', {
+              required: 'Password is required',
+              pattern: {
+                value: /^[A-Za-z0-9]{8,}$/,
+                message: 'Password must be at least 8 characters (letters or numbers)',
+              },
+            })}
+          />
+          {errors.password && (
+            <p className="text-sm text-red-500">{errors.password.message}</p>
+          )}
 
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              type="password"
-              placeholder="New Password"
-              className="w-full  rounded-xl border-[var(--lightblack)] bg-[var(--white)] text-[var(--black)] placeholder-[var(--black)] placeholder:opacity-60 focus:outline-none focus:ring-2 focus:ring-[var(--yellow)]"
-              {...register('password', {
-                required: 'Password is required',
-                pattern: {
-                  value: /^[A-Za-z0-9]{8,}$/,
-                  message: 'Password must be at least 8 characters (letters or numbers)',
-                },
-              })}
-            />
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password.message}</p>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3 rounded-full bg-gradient-to-r from-[var(--black)] to-[var(--yellow)] font-semibold text-[var(--white)] text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
-            >
-              Set Password
-            </button>
-          </form>
-        </div>
+          <button
+            type="submit"
+            className="w-full py-3 rounded-full bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(52.7%_0.194_149.214)] font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform"
+          >
+            Set Password
+          </button>
+        </form>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default Set_password
+export default Set_password;

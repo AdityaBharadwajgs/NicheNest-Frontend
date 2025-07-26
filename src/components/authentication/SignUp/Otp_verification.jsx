@@ -16,10 +16,12 @@ const Otp_verification = () => {
   } = useForm();
   const onSubmit = (data) => {
     console.log(data);
+    console.log(signedupUser)
     const otp = data.otp;
     const joinedOTP = otp.join('');
     console.log(joinedOTP);
-
+    console.log(signedupUser._id)
+    
     try {
       axios({
         method: 'POST',
@@ -39,7 +41,7 @@ const Otp_verification = () => {
   }
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--yellow)] to-[var(--white)] p-4 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-300 via-green-200 to-white p-4">
 
         <div className="relative w-full max-w-md border border-[rgba(212,175,55,0.3)] rounded-3xl shadow-2xl p-10 text-center z-10 space-y-6">
           <h2 className="text-3xl font-bold text-[var(--lightblack)]">Verify OTP</h2>
@@ -80,7 +82,7 @@ const Otp_verification = () => {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-full bg-gradient-to-r from-[var(--black)] to-[var(--yellow)] font-semibold text-[var(--white)] text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
+              className="w-full py-3 rounded-full bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(52.7%_0.194_149.214)] font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform"
             >
               Verify OTP
             </button>

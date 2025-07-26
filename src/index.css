@@ -1,11 +1,8 @@
 @import "tailwindcss";
 
-
-:root{
-  --black:#000000;
-  --lightblack:#1A1A1A;
-  --yellow:#D4AF37;
-  --gray:#E0E0E0;
-  --white:#FFFFFF;
-
+:root {
+  --primary: oklch(62.7% 0.194 149.214);
+  --primary-dark: oklch(52.7% 0.194 149.214); /* optional darker shade */
+  --white: #ffffff;
+  --black: #000000;
 }

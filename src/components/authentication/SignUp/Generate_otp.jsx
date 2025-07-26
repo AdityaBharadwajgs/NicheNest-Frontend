@@ -1,73 +1,69 @@
-import React from 'react'
-import { useForm } from "react-hook-form";
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { errorToast, successToast } from '../../../plugins/toast';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Input } from '../../reusable/Input';
+
 const Generate_otp = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm();
-    const onSubmit = (data) => {
-        console.log(data);
-        try {
-            axios({
-                method: 'POST',
-                url: `${import.meta.env.VITE_BASE_URL}/auth/generate_otp`,
-                data: data
-            }).then((response) => {
-                console.log(response.data);
-                successToast('OTP sent to your email');
-                navigate('/verify_otp')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-            })
-        } catch (error) {
-            console.log(error);
-            errorToast('something went wrong')
-
-        }
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/generate_otp`,
+        data
+      );
+      console.log(response.data);
+      successToast('✅ OTP sent to your email!');
+      navigate('/verify_otp');
+    } catch (error) {
+      console.error('OTP Generation Error:', error);
+      errorToast('❌ Something went wrong. Please try again.');
     }
-    return (
-        <>
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--yellow)] to-[var(--white)] p-4 relative overflow-hidden">
-                <div className="relative w-full max-w-md border border-[rgba(212,175,55,0.3)] rounded-3xl shadow-2xl p-8 text-center z-10">
-                    <h2 className="text-3xl font-bold text-[var(--lightblack)] mb-4">OTP Generation</h2>
-                    <p className="text-[var(--lightblack)]/80 mb-8">
-                        An OTP will be sent to your email.
-                    </p>
+  };
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left">
-                        <Input
-                            type="text"
-                            placeholder="Enter Email"
-                            className="w-full  rounded-xl border-[var(--lightblack)] bg-[var(--white)] text-[var(--black)] placeholder-[var(--black)] placeholder:opacity-60 focus:outline-none focus:ring-2 focus:ring-[var(--yellow)]"
-                            {...register('email', {
-                                required: 'Email is required',
-                                pattern: {
-                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                    message: 'Invalid Email',
-                                },
-                            })}
-                        />
-                        {errors.email && <p className="mt-1 text-red-500">{errors.email.message}</p>}
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-300 via-green-200 to-white p-4">
+      <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-2xl border border-gray-200 text-center">
+        <h2 className="text-3xl font-bold text-gray-800 mb-3">🔐 OTP Verification</h2>
+        <p className="text-gray-600 mb-6">An OTP will be sent to your registered email.</p>
 
-                        <button
-                            type="submit"
-                            className="w-full py-3 rounded-full bg-gradient-to-r from-[var(--black)] to-[var(--yellow)] font-semibold text-[var(--white)] text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
-                        >
-                            Generate OTP
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </>
-    )
-}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-left">
+          <div>
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full rounded-lg border-gray-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+              {...register('email', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Invalid email format',
+                },
+              })}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+            )}
+          </div>
 
-export default Generate_otp
+          <button
+            type="submit"
+            className="w-full py-3 rounded-full bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(52.7%_0.194_149.214)] font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform"
+          >
+            Generate OTP
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Generate_otp;
