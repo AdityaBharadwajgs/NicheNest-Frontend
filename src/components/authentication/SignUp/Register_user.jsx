@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import AxiosInstance from '../../../config/Api_call';
 import { errorToast, successToast } from '../../../plugins/toast';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setSignedupUser } from '../../../redux_toolkit/signedupUserslice';
 import { Input } from '../../reusable/Input';
 
 const Register_user = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { signedupUser } = useSelector(store => store.signedupUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -20,19 +20,19 @@ const Register_user = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/auth/register_user`,
-        data
-      );
+      setIsLoading(true);
+      const response = await AxiosInstance.post('/auth/register_user', data);
 
       successToast('User Registration Successful');
       localStorage.setItem('signedupUser', JSON.stringify(response.data.registered_user));
       dispatch(setSignedupUser(response.data.registered_user));
-      console.log(signedupUser._id)
       navigate('/generate_otp');
     } catch (error) {
       console.error(error);
-      errorToast('Something went wrong');
+      const message = error?.response?.data?.message || 'Something went wrong';
+      errorToast(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,9 +80,10 @@ const Register_user = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-full bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(52.7%_0.194_149.214)] font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform"
+            disabled={isLoading}
+            className="w-full py-3 rounded-full bg-green-600 hover:bg-green-700 font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Submit
+            {isLoading ? 'Submitting...' : 'Submit'}
           </button>
         </form>
 
@@ -101,3 +102,4 @@ const Register_user = () => {
 };
 
 export default Register_user;
+

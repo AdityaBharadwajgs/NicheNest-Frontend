@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Home & Landing
 import Home from '../components/home/Home';
@@ -32,15 +32,25 @@ import AddProduct from '../components/home/AddProduct';
 import AddArtisan from '../components/home/AddArtisan';
 import EditArtisan from '../components/home/EditArtisan';
 import EditProduct from '../components/home/EditProduct'; // ✅ Import the EditProduct component
-import { LogIn } from 'lucide-react';
 import TrackOrder from "./home/TrackOrder";
+
+// ─── Role-Based Route Guard ────────────────────────────────────────────────
+// Blocks admin users from accessing user-only pages.
+// If role === 'admin', redirect to /admin/dashboard instead.
+const RestrictedForAdmin = ({ children }) => {
+  const role = localStorage.getItem('role');
+  if (role === 'admin') {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+  return children;
+};
 
 const Routing = () => {
   return (
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path='/' element={<Login />} />
+        <Route path='/' element={<Home />} />
         <Route path='/home' element={<Home />} />
         <Route path='/search' element={<SearchResultsPage />} />
 
@@ -51,9 +61,9 @@ const Routing = () => {
         <Route path='/set_password' element={<SetPassword />} />
         <Route path='/login' element={<Login />} />
 
-        {/* User Profile & Cart */}
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path='/cart' element={<CartPage />} />
+        {/* User-only routes — Admin is redirected to /admin/dashboard */}
+        <Route path="/profile" element={<RestrictedForAdmin><ProfilePage /></RestrictedForAdmin>} />
+        <Route path='/cart' element={<RestrictedForAdmin><CartPage /></RestrictedForAdmin>} />
 
         {/* Product Details */}
         <Route path='/product/:id' element={<ProductDetails />} />
@@ -73,11 +83,11 @@ const Routing = () => {
         <Route path='/admin/edit-artisan/:id' element={<EditArtisan />} />
         <Route path='/admin/edit-product/:id' element={<EditProduct />} /> {/* ✅ EDIT ROUTE */}
 
-        {/* Order Page */}
-        <Route path='/order' element={<OrderPage />} />
+        {/* Order Page — user only */}
+        <Route path='/order' element={<RestrictedForAdmin><OrderPage /></RestrictedForAdmin>} />
 
-        {/* Track Order Page */}
-        <Route path="/track-order/:trackingId" element={<TrackOrder />} />
+        {/* Track Order Page — user only */}
+        <Route path="/track-order/:trackingId" element={<RestrictedForAdmin><TrackOrder /></RestrictedForAdmin>} />
       </Routes>
     </Router>
   );

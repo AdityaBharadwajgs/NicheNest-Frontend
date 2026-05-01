@@ -4,7 +4,9 @@ import { Button } from "../reusable/Button";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import AxiosInstance from "../../config/Api_call";
 
-const API = "http://localhost:5000/api";
+import { errorToast, successToast } from "../../plugins/toast";
+
+const API = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
 
 const renderStars = (rating) => {
   if (!rating) return null;
@@ -51,22 +53,23 @@ export default function ProductDetail() {
   // Add to Cart handler
   const handleAddToCart = async () => {
     if (!userId) {
-      alert("Please log in to add to cart.");
+      errorToast("Please log in to add to cart.");
       navigate('/login');
       return;
     }
     try {
       await AxiosInstance.post(`/cart/${userId}/add`, { product: { id } });
+      successToast("Added to cart!");
       navigate('/cart');
     } catch (err) {
-      alert("Failed to add to cart.");
+      errorToast("Failed to add to cart.");
     }
   };
 
   // Buy Now handler
   const handleBuyNow = async () => {
     if (!userId) {
-      alert("Please log in to buy products.");
+      errorToast("Please log in to buy products.");
       navigate('/login');
       return;
     }
@@ -80,22 +83,22 @@ export default function ProductDetail() {
           .then((data) => setProduct(data));
       }, 1000); // Give backend a moment to update stock
     } catch (err) {
-      alert("Failed to add to cart for checkout.");
+      errorToast("Failed to process for checkout.");
     }
   };
 
   // Add to Wishlist handler
   const handleAddToWishlist = async () => {
     if (!userId) {
-      alert("Please log in to add to wishlist.");
+      errorToast("Please log in to add to wishlist.");
       navigate('/login');
       return;
     }
     try {
       await AxiosInstance.post(`/users/${userId}/wishlist`, { productId: id });
-      alert("Added to wishlist!");
+      successToast("Added to wishlist!");
     } catch (err) {
-      alert("Failed to add to wishlist.");
+      errorToast("Failed to add to wishlist.");
     }
   };
 
@@ -146,6 +149,7 @@ export default function ProductDetail() {
 
           <div className="flex flex-wrap gap-4 mt-4">
             <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={handleAddToCart}>🛒 Add to Cart</Button>
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white" onClick={handleBuyNow}>⚡ Buy Now</Button>
             <Button className="bg-pink-600 hover:bg-pink-700 text-white" onClick={handleAddToWishlist}>❤️ Add to Wishlist</Button>
           </div>
         </div>

@@ -15,8 +15,9 @@ import {
 import profileBanner from "../assets/Images/banner.jpg";
 import defaultAvatar from "../assets/Images/user.png";
 import product1 from "../assets/Images/Wooden Bowl.jpg";
+import { successToast, errorToast } from "../plugins/toast";
 
-const API = "http://localhost:5000/api";
+const API = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -106,19 +107,19 @@ const ProfilePage = () => {
         location: updated.city || "",
       });
       if (updated.avatar) setAvatar(updated.avatar);
-      alert("✅ Profile updated");
+      successToast("✅ Profile updated");
       setActivityLog((prev = []) => [
         { action: "Updated profile info", date: new Date() },
         ...prev,
       ]);
     } catch {
-      alert("❌ Failed to update profile");
+      errorToast("❌ Failed to update profile");
     }
   };
 
   const handleAddAddress = async () => {
     const { street, city, state, country, pincode } = newAddress;
-    if ([street, city, state, country, pincode].some((v) => !v.trim())) return alert("⚠️ Please fill all fields");
+    if ([street, city, state, country, pincode].some((v) => !v.trim())) return errorToast("⚠️ Please fill all fields");
 
     try {
       const res = await fetch(`${API}/users/${loggedinUser._id}/addresses`, {
@@ -130,16 +131,16 @@ const ProfilePage = () => {
       const data = await res.json();
       setAddresses(Array.isArray(data) ? data : []);
       setNewAddress({ street: "", city: "", state: "", country: "", pincode: "" });
-      alert("✅ Address added");
+      successToast("✅ Address added");
       setActivityLog((prev) => [{ action: "Added a new address", date: new Date() }, ...prev]);
     } catch {
-      alert("❌ Failed to add address");
+      errorToast("❌ Failed to add address");
     }
   };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    if (passwords.new !== passwords.confirm) return alert("⚠️ Passwords don't match");
+    if (passwords.new !== passwords.confirm) return errorToast("⚠️ Passwords don't match");
 
     try {
       const res = await fetch(`${API}/users/${loggedinUser._id}/password`, {
@@ -153,18 +154,18 @@ const ProfilePage = () => {
 
       const response = await res.json();
       if (res.ok) {
-        alert("✅ Password updated");
+        successToast("✅ Password updated");
         setPasswords({ current: "", new: "", confirm: "" });
         setActivityLog((prev) => [{ action: "Changed password", date: new Date() }, ...prev]);
-      } else alert(response.error || "❌ Update failed");
+      } else errorToast(response.error || "❌ Update failed");
     } catch {
-      alert("❌ Error updating password");
+      errorToast("❌ Error updating password");
     }
   };
 
   const handleBuyNow = async (productId) => {
     try {
-      console.log("Moving product to orders:", productId);
+
       
       const moveRes = await fetch(`${API}/users/${loggedinUser._id}/orders`, {
         method: "POST",
@@ -174,28 +175,28 @@ const ProfilePage = () => {
       
       if (moveRes.ok) {
         const responseData = await moveRes.json();
-        console.log("Move to orders response:", responseData);
+
         
         // Update wishlist and orders from the response
         setWishlist(responseData.wishlist || []);
         setOrders(responseData.orders || []);
         
-        alert("✅ Product moved to orders successfully!");
+        successToast("✅ Product moved to orders successfully!");
         setActivityLog((prev) => [{ action: "Moved item from wishlist to orders", date: new Date() }, ...prev]);
       } else {
         const errorData = await moveRes.json();
         console.error("Move to orders error:", errorData);
-        alert(`❌ Could not move to orders: ${errorData.error || 'Unknown error'}`);
+        errorToast(`❌ Could not move to orders: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error moving to orders:", error);
-      alert("❌ Could not move to orders");
+      errorToast("❌ Could not move to orders");
     }
   };
 
   const handleRemoveFromWishlist = async (productId) => {
     try {
-      console.log("Removing product from wishlist:", productId);
+
       
       const res = await fetch(`${API}/users/${loggedinUser._id}/wishlist`, {
         method: "DELETE",
@@ -205,19 +206,19 @@ const ProfilePage = () => {
       
       if (res.ok) {
         const updatedWishlist = await res.json();
-        console.log("Updated wishlist after removal:", updatedWishlist);
+
         setWishlist(updatedWishlist);
         
-        alert("✅ Product removed from wishlist!");
+        successToast("✅ Product removed from wishlist!");
         setActivityLog((prev) => [{ action: "Removed item from wishlist", date: new Date() }, ...prev]);
       } else {
         const errorData = await res.json();
         console.error("Remove from wishlist error:", errorData);
-        alert(`❌ Could not remove from wishlist: ${errorData.error || 'Unknown error'}`);
+        errorToast(`❌ Could not remove from wishlist: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error removing from wishlist:", error);
-      alert("❌ Could not remove from wishlist");
+      errorToast("❌ Could not remove from wishlist");
     }
   };
 
@@ -241,13 +242,13 @@ const ProfilePage = () => {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
 
-        alert("✅ Invoice downloaded successfully!");
+        successToast("✅ Invoice downloaded successfully!");
       } else {
-        alert("❌ Could not download invoice");
+        errorToast("❌ Could not download invoice");
       }
     } catch (error) {
       console.error("Error downloading invoice:", error);
-      alert("❌ Could not download invoice");
+      errorToast("❌ Could not download invoice");
     }
   };
 

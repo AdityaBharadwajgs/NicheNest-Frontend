@@ -2,11 +2,16 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { errorToast, successToast } from '../../../plugins/toast';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import AxiosInstance from '../../../config/Api_call';
 import { Input } from '../../reusable/Input';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setSignedupUser } from '../../../redux_toolkit/signedupUserslice';
 
 const Generate_otp = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -16,16 +21,20 @@ const Generate_otp = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/auth/generate_otp`,
-        data
-      );
-      console.log(response.data);
+      setIsLoading(true);
+      const response = await AxiosInstance.post('/auth/generate_otp', data);
+
+      if (response.data.user) {
+        dispatch(setSignedupUser(response.data.user));
+      }
+
       successToast('✅ OTP sent to your email!');
       navigate('/verify_otp');
     } catch (error) {
       console.error('OTP Generation Error:', error);
       errorToast('❌ Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,9 +65,10 @@ const Generate_otp = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-full bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(52.7%_0.194_149.214)] font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform"
+            disabled={isLoading}
+            className="w-full py-3 rounded-full bg-green-600 hover:bg-green-700 font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Generate OTP
+            {isLoading ? 'Generating...' : 'Generate OTP'}
           </button>
         </form>
       </div>
@@ -67,3 +77,4 @@ const Generate_otp = () => {
 };
 
 export default Generate_otp;
+

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import AxiosInstance from "../../config/Api_call";
+import { errorToast, successToast } from "../../plugins/toast";
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -18,11 +19,11 @@ export default function EditProduct() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const res = await AxiosInstance.get(`/products/${id}`);
         setForm(res.data);
       } catch (err) {
         console.error("Error fetching product:", err);
-        alert("Failed to load product details.");
+        errorToast("Failed to load product details.");
       }
     };
     fetchProduct();
@@ -36,12 +37,12 @@ export default function EditProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/products/${id}`, form);
-      alert("✅ Product updated successfully");
+      await AxiosInstance.put(`/products/${id}`, form);
+      successToast("✅ Product updated successfully");
       navigate("/admin/dashboard"); // <-- Fixed: go to dashboard, not /admin
     } catch (err) {
       console.error("Error updating product:", err);
-      alert("❌ Failed to update product.");
+      errorToast("❌ Failed to update product.");
     }
   };
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import AxiosInstance from "../../config/Api_call";
+import { errorToast, successToast } from "../../plugins/toast";
 import Navbar from "../navbar/Navbar";
 
 export default function AddProduct() {
@@ -34,18 +35,18 @@ export default function AddProduct() {
       !formData.description ||
       !formData.image
     ) {
-      alert("⚠️ Please fill in all fields.");
+      errorToast("⚠️ Please fill in all fields.");
       setLoading(false);
       return;
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/products", formData);
-      alert("✅ Product added successfully!");
+      const res = await AxiosInstance.post("/products", formData);
+      successToast("✅ Product added successfully!");
       navigate("/admin/dashboard");
     } catch (error) {
       console.error("❌ Error adding product:", error.response?.data || error.message);
-      alert("❌ Failed to add product. Please check the data and try again.");
+      errorToast("❌ Failed to add product. Please check the data and try again.");
     } finally {
       setLoading(false);
     }

@@ -3,8 +3,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "../../../reusable/Button";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import AxiosInstance from "../../../../config/Api_call";
+import { errorToast, successToast } from "../../../../plugins/toast";
 
-const API = "http://localhost:5000/api";
+const API = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
 
 // ⭐ Render star ratings
 const renderStars = (rating) => {
@@ -46,25 +47,25 @@ export default function JewelryDetailsPage() {
 
   // Add to Cart handler
   const handleAddToCart = async () => {
+    const userData = localStorage.getItem('user');
+    const user = userData ? JSON.parse(userData) : null;
+    const userId = user ? user._id : null;
+
+    if (!userId) {
+      errorToast("Please log in to add to cart.");
+      navigate('/login');
+      return;
+    }
+
     try {
-      const userData = localStorage.getItem('user');
-      if (!userData) {
-        alert('Please login to add items to cart');
-        return;
-      }
-
-      const user = JSON.parse(userData);
-      const userId = user._id;
-
       await AxiosInstance.post(`/cart/${userId}/add`, {
         product: { id: product._id }
       });
-      
-      // Navigate to cart page instead of showing alert
+      successToast("Added to cart!");
       navigate('/cart');
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Failed to add product to cart');
+      errorToast('Failed to add product to cart');
     }
   };
 
@@ -81,7 +82,7 @@ export default function JewelryDetailsPage() {
 
   // Add to Wishlist handler
   const handleAddToWishlist = () => {
-    alert('Product added to wishlist!');
+    successToast('Product added to wishlist!');
   };
 
   if (loading) {
@@ -97,7 +98,7 @@ export default function JewelryDetailsPage() {
       <div className="min-h-screen flex flex-col items-center justify-center p-8">
         <h2 className="text-2xl font-bold mb-4 text-red-600">Product not found</h2>
         <Link to="/categories/jewelry">
-          <Button>← Back to Jewelry</Button>
+          <Button>← Back to Jewellery</Button>
         </Link>
       </div>
     );
@@ -106,7 +107,7 @@ export default function JewelryDetailsPage() {
   return (
     <div className="min-h-screen max-w-5xl mx-auto px-6 py-12 space-y-10 font-sans">
       <Link to="/categories/jewelry">
-        <Button className="mb-6">← Back to Jewelry</Button>
+        <Button className="mb-6">← Back to Jewellery</Button>
       </Link>
 
       {/* Product Info */}
@@ -247,4 +248,4 @@ export default function JewelryDetailsPage() {
       </div>
     </div>
   );
-}
+} 

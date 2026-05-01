@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { Button } from "../reusable/Button";
 import { FaCheckCircle, FaTruck, FaCreditCard, FaShieldAlt, FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import AxiosInstance from "../../config/Api_call";
+import { errorToast, successToast } from "../../plugins/toast";
 
 function getShipping(subtotal) {
   return subtotal >= 999 ? 0 : 30;
@@ -54,6 +55,7 @@ function isExpiryValid(expiry) {
   if (!/^\d{2}\/\d{2}$/.test(expiry)) return false;
   const [mm, yy] = expiry.split('/').map(Number);
   if (mm < 1 || mm > 12) return false;
+  if (yy < 27) return false; // Year must be 27 or above
   const now = new Date();
   const currentYear = now.getFullYear() % 100;
   const currentMonth = now.getMonth() + 1;
@@ -89,7 +91,7 @@ export default function OrderPage() {
   const [fieldErrors, setFieldErrors] = useState({ number: '', expiry: '', cvv: '', name: '', upiId: '' });
 
   // Get logged-in user from localStorage
-  const loggedinUser = JSON.parse(localStorage.getItem('loggedinUser')) || {};
+  const loggedinUser = JSON.parse(localStorage.getItem('user')) || {};
 
   // Add a placeholder QR code image URL
   const DUMMY_QR_URL = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=demo@upi&pn=Demo+Merchant&am=100';
@@ -133,9 +135,9 @@ export default function OrderPage() {
       setOrderConfirmed(true);
     } catch (err) {
       if (err.message && (err.message.includes('Network Error') || err.message.includes('ERR_CONNECTION_REFUSED') || err.message.includes('ERR_CONNECTION_RESET'))) {
-        alert("Order failed: Unable to connect to backend. Please ensure your backend server and MongoDB are running.\n\n1. Start MongoDB (mongod)\n2. Start backend: npm run dev in Niche_Ecommerce-BE\n3. Try again.");
+        errorToast("Order failed: Unable to connect to backend. Please ensure your backend server and MongoDB are running.");
       } else {
-        alert("Order failed: " + (err.response?.data?.error || err.message));
+        errorToast("Order failed: " + (err.response?.data?.error || err.message));
       }
     }
   };
@@ -294,7 +296,7 @@ export default function OrderPage() {
                         setConfirmedPaymentStatus("Paid");
                         setOrderConfirmed(true);
                       } catch (err) {
-                        alert("Order failed: " + (err.response?.data?.error || err.message));
+                        errorToast("Order failed: " + (err.response?.data?.error || err.message));
                       } finally {
                         setIsProcessing(false);
                       }
@@ -321,9 +323,18 @@ export default function OrderPage() {
                     errors.number = 'Card number must be 16 digits.';
                     valid = false;
                   }
-                  if (!cardDetails.expiry || !isExpiryValid(cardDetails.expiry)) {
+                  if (!cardDetails.expiry || !/^\d{2}\/\d{2}$/.test(cardDetails.expiry)) {
                     errors.expiry = 'Please enter a valid expiry date (MM/YY).';
                     valid = false;
+                  } else {
+                    const yy = parseInt(cardDetails.expiry.split('/')[1]);
+                    if (yy < 27) {
+                      errors.expiry = 'Expiry year must be 27 or later (e.g., 12/27).';
+                      valid = false;
+                    } else if (!isExpiryValid(cardDetails.expiry)) {
+                      errors.expiry = 'Please enter a valid expiry date (MM/YY).';
+                      valid = false;
+                    }
                   }
                   if (!cardDetails.cvv || cardDetails.cvv.length !== 3) {
                     errors.cvv = 'CVV must be 3 digits.';
@@ -335,7 +346,7 @@ export default function OrderPage() {
                   }
                   setFieldErrors(errors);
                   if (!valid) {
-                    alert('Please keep all fields required for Credit/Debit Card payment.');
+                    errorToast('Please keep all fields required for Credit/Debit Card payment.');
                     return;
                   }
                   setIsProcessing(true);
@@ -373,7 +384,7 @@ export default function OrderPage() {
                     setConfirmedPaymentStatus("Paid");
                     setOrderConfirmed(true);
                   } catch (err) {
-                    alert("Order failed: " + (err.response?.data?.error || err.message));
+                    errorToast("Order failed: " + (err.response?.data?.error || err.message));
                   } finally {
                     setIsProcessing(false);
                   }
@@ -386,7 +397,7 @@ export default function OrderPage() {
                   }
                   setFieldErrors(errors);
                   if (!valid) {
-                    alert('Please keep all fields required for UPI payment.');
+                    errorToast('Please keep all fields required for UPI payment.');
                     return;
                   }
                   // If UPI ID is provided, proceed with order
@@ -423,7 +434,7 @@ export default function OrderPage() {
                     setConfirmedPaymentStatus("Paid");
                     setOrderConfirmed(true);
                   } catch (err) {
-                    alert("Order failed: " + (err.response?.data?.error || err.message));
+                    errorToast("Order failed: " + (err.response?.data?.error || err.message));
                   } finally {
                     setIsProcessing(false);
                   }
@@ -432,7 +443,7 @@ export default function OrderPage() {
                 }
               }}
               disabled={isProcessing || 
-                (paymentMethod === 'Credit/Debit Card' && (!cardDetails.number || !cardDetails.expiry || !cardDetails.cvv || !cardDetails.name || !isExpiryValid(cardDetails.expiry))) ||
+                (paymentMethod === 'Credit/Debit Card' && (!cardDetails.number || !cardDetails.expiry || !cardDetails.cvv || !cardDetails.name)) ||
                 (paymentMethod === 'UPI' && (!cardDetails.upiId || cardDetails.upiId.trim() === ''))
               }
             >

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import AxiosInstance from "../../config/Api_call";
+import { errorToast, successToast } from "../../plugins/toast";
 import Navbar from "../navbar/Navbar";
 import { Button } from "../reusable/Button";
 import { Input } from "../reusable/Input";
@@ -24,7 +25,7 @@ const EditArtisan = () => {
   useEffect(() => {
     const fetchArtisan = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/artisans/${id}`);
+        const res = await AxiosInstance.get(`/artisans/${id}`);
         setArtisanData({
           name: res.data.name || "",
           email: res.data.email || "",
@@ -52,11 +53,11 @@ const EditArtisan = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/artisans/${id}`, artisanData);
-      alert("✅ Artisan updated successfully!");
+      await AxiosInstance.put(`/artisans/${id}`, artisanData);
+      successToast("✅ Artisan updated successfully!");
       navigate("/admin/dashboard"); // Redirect to dashboard after update
     } catch (err) {
-      alert("❌ Failed to update artisan.");
+      errorToast("❌ Failed to update artisan.");
     }
   };
 

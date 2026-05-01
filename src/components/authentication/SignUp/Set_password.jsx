@@ -1,5 +1,5 @@
-import axios from 'axios';
-import React from 'react';
+import AxiosInstance from '../../../config/Api_call';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { errorToast, successToast } from '../../../plugins/toast';
@@ -9,6 +9,7 @@ import { Input } from '../../reusable/Input';
 const Set_password = () => {
   const navigate = useNavigate();
   const { signedupUser } = useSelector((store) => store.signedupUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -18,19 +19,16 @@ const Set_password = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/auth/create_password/${signedupUser._id}`,
-        data,
-        {
-          params: { id: signedupUser._id },
-        }
-      );
-      console.log(res.data);
-      successToast('✅ Your account is created successfully!');
+      setIsLoading(true);
+      const res = await AxiosInstance.post(`/auth/create_password/${signedupUser._id}`, data);
+
+      successToast('✅ Password updated successfully!');
       navigate('/login');
     } catch (error) {
       console.error('❌ Password creation failed:', error);
       errorToast('❌ Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,9 +59,10 @@ const Set_password = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-full bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(52.7%_0.194_149.214)] font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform"
+            disabled={isLoading}
+            className="w-full py-3 rounded-full bg-green-600 hover:bg-green-700 font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Set Password
+            {isLoading ? 'Setting Password...' : 'Set Password'}
           </button>
         </form>
       </div>
@@ -72,3 +71,4 @@ const Set_password = () => {
 };
 
 export default Set_password;
+

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import AxiosInstance from "../../config/Api_call";
+import { errorToast, successToast } from "../../plugins/toast";
 import Navbar from "../navbar/Navbar";
 
 export default function AddArtisan() {
@@ -20,14 +21,14 @@ export default function AddArtisan() {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5000/api/artisans", artisan);
+      const res = await AxiosInstance.post("/artisans", artisan);
       if (res.status === 201 || res.status === 200) {
-        alert("✅ Artisan added successfully!");
+        successToast("✅ Artisan added successfully!");
         navigate("/admin/dashboard");
       }
     } catch (error) {
       console.error("❌ Error adding artisan:", error.message);
-      alert("Something went wrong. Please try again.");
+      errorToast("Something went wrong. Please try again.");
     }
   };
 

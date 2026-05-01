@@ -13,11 +13,9 @@ import { setloggedinUser } from '../../../redux_toolkit/loggedinUserslice';
 const Login = () => {
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState('user');
-  const dispatch = useDispatch()
-  const { signedupUser } = useSelector(store => store.signedupUser);
-  const { loggedinUser } = useSelector(store => store.loggedinUser);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  
   const {
     register,
     handleSubmit,
@@ -26,12 +24,14 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const response = await AxiosInstance.post('/auth/login', data);
 
       const { token, user } = response.data;
 
       if (user.role !== selectedRole) {
         errorToast(`You are not authorized as ${selectedRole}`);
+        setIsLoading(false);
         return;
       }
 
@@ -45,12 +45,13 @@ const Login = () => {
         navigate('/admin/dashboard');
       } else {
         dispatch(setloggedinUser(response.data.user));
-        localStorage.setItem('user', JSON.stringify(user));
         navigate('/home');
       }
     } catch (error) {
       console.error('Login error:', error.response?.data || error.message);
       errorToast(error.response?.data?.message || 'Login failed. Try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,13 +81,22 @@ const Login = () => {
             className="w-full rounded-xl border border-[#1f2937] bg-white text-[#111827] placeholder:text-[#4b5563] focus:outline-none focus:ring-2 focus:ring-green-500"
             {...register('password', {
               required: 'Password is required',
-              pattern: {
-                value: /^[A-Za-z0-9]{8,}$/,
+              minLength: {
+                value: 8,
                 message: 'Minimum 8 characters required',
               },
             })}
           />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+          {selectedRole === 'user' && (
+            <div className="flex justify-end mt-[-15px]">
+              <span
+                className="text-sm text-green-600 cursor-pointer hover:underline font-medium"
+                onClick={() => navigate('/generate_otp')}
+              >
+                Forgot password?
+              </span>
+            </div>
+          )}
 
           <select
             value={selectedRole}
@@ -99,9 +109,10 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-full bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(52.7%_0.194_149.214)] font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform"
+            disabled={isLoading}
+            className="w-full py-3 rounded-full bg-green-600 hover:bg-green-700 font-semibold text-white text-lg shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
