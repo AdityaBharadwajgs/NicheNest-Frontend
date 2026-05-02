@@ -68,23 +68,23 @@ export default function ProductDetail() {
 
   // Buy Now handler
   const handleBuyNow = async () => {
-    if (!userId) {
-      errorToast("Please log in to buy products.");
-      navigate('/login');
-      return;
-    }
-    try {
-      await AxiosInstance.post(`/cart/${userId}/add`, { product: { id } });
-      navigate('/order', { state: { product } });
-      // After order, refetch product to update stock
-      setTimeout(() => {
-        fetch(`${API}/products/${id}`)
-          .then((res) => res.json())
-          .then((data) => setProduct(data));
-      }, 1000); // Give backend a moment to update stock
-    } catch (err) {
-      errorToast("Failed to process for checkout.");
-    }
+  if (!userId) {
+    errorToast("Please log in to buy products.");
+    navigate('/login');
+    return;
+  }
+
+  try {
+    await AxiosInstance.post(`/cart/${userId}/add`, { product: { id } });
+
+    successToast("Product added to cart!");
+
+    // 🔥 Redirect to cart instead of checkout
+    navigate('/cart');
+
+  } catch (err) {
+    errorToast("Failed to process your request.");
+  }
   };
 
   // Add to Wishlist handler
